@@ -5,176 +5,214 @@
 <title>ニュース接触タイプ診断</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
-body { font-family: Arial, sans-serif; padding: 20px; background: #f5f7fb; color: #222; }
-.panel { background: white; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,.05); }
-.title { font-weight: bold; font-size: 20px; margin-bottom: 8px; }
-.q { margin: 12px 0; }
-.answers { margin-left: 20px; }
-.btn { padding: 10px 14px; border: none; border-radius: 6px; background: #4a90e2; color: white; cursor: pointer; }
-.btn:disabled { background: #aaa; cursor: not-allowed; }
-.card { border: 1px solid #f0c419; background: #fff9dc; padding: 16px; border-radius: 8px; }
-.name { font-size: 18px; font-weight: bold; color: #b58900; }
-.desc { margin-top: 6px; }
+body {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background: #f5f7fb;
+  color: #222;
+}
+.panel {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+}
+.title {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+.q {
+  margin: 12px 0;
+}
+.answers {
+  margin-top: 16px;
+}
+.answer-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.answer-btn:hover {
+  background: #eef5ff;
+  border-color: #4a90e2;
+}
+.card {
+  border: 1px solid #f0c419;
+  background: #fff9dc;
+  padding: 16px;
+  border-radius: 8px;
+}
+.name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #b58900;
+}
+.desc {
+  margin-top: 6px;
+}
+.progress {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #666;
+}
 </style>
 </head>
 <body>
 
 <div class="panel" id="intro">
-<div class="title">いくつかの質問に答えて、あなたのニュースとの付き合い方をチェックしよう！</div>
-<div>ニュースの取り方のタイプを、あなたの回答パターンから動物キャラクターで診断します。</div>
+  <div class="title">いくつかの質問に答えて、あなたのニュースとの付き合い方をチェックしよう！</div>
+  <div>ニュースの取り方のタイプを、あなたの回答パターンから動物キャラクターで診断します。</div>
 </div>
 
 <div id="quiz"></div>
 
 <div class="panel" id="resultArea" style="display:none;">
-<div class="title">診断結果</div>
-<div id="resultCard" class="card"></div>
-<div id="article" style="margin-top:12px;">
-<strong>おすすめ記事</strong>
-<div style="margin-top:6px;">
-👉 朝日新聞の若手記者が聞いた！新しいマスメディアの形は？RehacQ高橋氏の答えは
-</div>
-</div>
+  <div class="title">診断結果</div>
+  <div id="resultCard" class="card"></div>
+  <div id="article" style="margin-top:12px;">
+    <strong>おすすめ記事</strong>
+    <div style="margin-top:6px;">
+      👉 朝日新聞の若手記者が聞いた！新しいマスメディアの形は？RehacQ高橋氏の答えは
+    </div>
+  </div>
 </div>
 
 <script>
-// データ部（ご提示のデータをそのままJSで利用します）
 const QUESTIONS = [
-{ text: "Q1. 新しいニュースを知るとき、あなたのスタイルに近いのは？", answers: [
-"自分でキーワード検索したり、ニュースアプリを巡回する",
-"SNSのタイムラインや、友達からのシェアで自然と知る",
-] },
-{ text: "Q2. あなたがよく見るニュースのジャンルは？", answers: [
-"政治経済からエンタメ、スポーツまで幅広くチェックする",
-"好きなアイドルや趣味、特定の社会問題など、関心事が中心",
-] },
-{ text: "Q3. 衝撃的なニュースを見たとき、あなたの最後の反応は？", answers: [
-"「これは本当？」「他のメディアではどう報じている？」と事実関係が気になる",
-"「すごい！」「ありえない！」と、まず感情的に反応する",
-] },
-{ text: "Q4. 面白い記事や動画を見つけたら、どうすることが多い？", answers: [
-"SNSでシェアしたり、友達に「これ見て！」とすぐ教える",
-"自分の中で楽しんで、特に誰かに言うことは少ない",
-] },
-{ text: "Q5. 情報源について、あなたの考えに近いのは？", answers: [
-"複数のメディアや専門家の意見を比較して、多角的に判断したい",
-"信頼している特定のメディアやインフルエンサーがいれば十分",
-] }
+  { text: "Q1. 新しいニュースを知るとき、あなたのスタイルに近いのは？", answers: [
+    "自分でキーワード検索したり、ニュースアプリを巡回する",
+    "SNSのタイムラインや、友達からのシェアで自然と知る",
+  ] },
+  { text: "Q2. あなたがよく見るニュースのジャンルは？", answers: [
+    "政治経済からエンタメ、スポーツまで幅広くチェックする",
+    "好きなアイドルや趣味、特定の社会問題など、関心事が中心",
+  ] },
+  { text: "Q3. 衝撃的なニュースを見たとき、あなたの最後の反応は？", answers: [
+    "「これは本当？」「他のメディアではどう報じている？」と事実関係が気になる",
+    "「すごい！」「ありえない！」と、まず感情的に反応する",
+  ] },
+  { text: "Q4. 面白い記事や動画を見つけたら、どうすることが多い？", answers: [
+    "SNSでシェアしたり、友達に「これ見て！」とすぐ教える",
+    "自分の中で楽しんで、特に誰かに言うことは少ない",
+  ] },
+  { text: "Q5. 情報源について、あなたの考えに近いのは？", answers: [
+    "複数のメディアや専門家の意見を比較して、多角的に判断したい",
+    "信頼している特定のメディアやインフルエンサーがいれば十分",
+  ] }
 ];
 
 const ANIMAL_TYPES = {
-"11111": {name: "🦅 博識のジャーナリスト・ワシ", description: "空から世界を見渡すように、広く深く情報を集め、分析し、発信するリーダー。あなたの発言は多くの人に影響を与えるでしょう。"},
-"11112": {name: "🐬 情報司令塔・イルカ", description: "広い海の情報を集め、仲間と共有するのが得意。分析力と発信力を兼ね備え、コミュニティの中心で活躍する人気者です。"},
-"11121": {name: "🦉 知の探求者・フクロウ", description: "幅広い知識を冷静に分析し、自分の内なる知恵として蓄える賢者。物事の本質を見抜く力を持っています。"},
-"11122": {name: "🦫 情報収集家・ビーバー", description: "コツコツと広範囲から情報を集め、自分の知識のダムを築く努力家。その知識は、いつか大きな価値を生み出します。"},
-"11211": {name: "🦜 お祭り好きの評論家・オウム", description: "世の中の話題を広く集め、感情豊かに分析し、周りに広めるのが好き。場を盛り上げるムードメーカーです。"},
-"11212": {name: "🦊 トレンドウォッチャー・キツネ", description: "世の中の流行に敏感で、面白そうと思った情報をキャッチしては、すぐさま周りにシェア。機転が利き、いつも話題の中心にいます。"},
-"11221": {name: "🐈 内なる批評家・ネコ", description: "世の中の出来事を幅広く眺め、自分の中で「好きか嫌いか」を判断する自由人。気分が乗らないことには関心を示しません。"},
-"11222": {name: "🦦 世間を眺めるカピバラ", description: "流れてくる情報をぼんやりと眺め、世の中の雰囲気を感じ取る平和主義者。のんびり情報浴を楽しんでいます。"},
-"12111": {name: "🐝 一点突破の伝道師・ミツバチ", description: "特定分野の蜜（情報）を深く集め、分析し、仲間に正確に伝える伝達のプロ。あなたの専門知識はコミュニティの宝です。"},
-"12112": {name: "🦦 トレンドハンター・ミーアキャット", description: "自分の好きな分野の最新情報を誰よりも早くキャッチ！分析と共有が得意な、生まれついてのトレンドセッターです。"},
-"12121": {name: "🐙 孤高の研究者・タコ", description: "深い海の底で、興味のあることをとことん分析・探求するインテリ。その思考の深さは誰にも真似できません。"},
-"12122": {name: "鼹 専門知識コレクター・モグラ", description: "一度気になったテーマを深く掘り下げる研究者タイプ。自分の知的好奇心に忠実で、専門家レベルの知識を蓄えます。"},
-"12211": {name: "🐧 推し活応援団長・ペンギン", description: "自分の「好き」を深く追求し、その魅力を感情豊かに分析して世界に発信！愛と情熱で周りを巻き込むリーダーです。"},
-"12212": {name: "🦜 ゴシップ好きのインコ", description: "特定のコミュニティの噂話や最新ニュースが大好き！見つけた情報をすぐに仲間に広めて楽しむ、おしゃべり上手な人気者。"},
-"12221": {name: "🦙 趣味に生きるアルパカ", description: "自分の好きな世界にどっぷり浸かり、マイペースに情報を楽しむタイプ。他人の評価は気にせず、自分の「好き」を大切にします。"},
-"12222": {name: "クラゲ", description: "自分の好きな情報だけが漂う心地よい空間（沼）で、ゆらゆらと過ごすのが至福の時。外界にはあまり興味がありません。"},
-"21111": {name: "🐘 博愛のコメンテーター・ゾウ", description: "流れてくる幅広い情報に対し、冷静かつ愛情深い視点でコメントを発信する穏やかな巨人。あなたの言葉は多くの人を安心させます。"},
-"21112": {name: "🐕 社交的な情報通・イヌ", description: "人から聞いた情報を元に、自分でも確かめて周りに教えるのが得意。フレンドリーで信頼されるコミュニティのハブ的存在。"},
-"21121": {name: "🐢 物静かな博学者・リクガメ", description: "受け取った幅広い情報を、時間をかけてじっくり自分の中で分析する賢者。長年の経験に裏打ちされた深い洞察力を持っています。"},
-"21122": {name: "🐑 知識の聞き上手・ヒツジ", description: "周りから入ってくる様々な情報を、穏やかに受け止める聞き上手。平和を愛し、知識を静かに蓄えます。"},
-"21211": {name: "🐼 共感系インフルエンサー・パンダ", description: "世の中の話題に感情豊かに反応し、その気持ちをシェアすることで多くの共感を集める人気者。あなたの言葉は人を癒します。"},
-"21212": {name: "🐦 うわさ話好きのスズメ", description: "あちこちから聞こえてくる情報をキャッチしては、仲間と共有するのが大好き。にぎやかな場所を好むコミュニケーターです。"},
-"21221": {name: "🦦 人間観察好きのフェレット", description: "世の中の様々な出来事を「面白いなぁ」と眺め、自分の中で楽しむ観察者。好奇心旺盛ですが、あまり表には出しません。"},
-"21222": {name: "🦥 のんびり屋のナマケモノ", description: "ただただ流れてくる情報を眺めているだけで満足。自分で動くのは少し面倒だけど、世の中のことはなんとなく知っています。"},
-"22111": {name: "🦘 専門分野の解説者・カンガルー", description: "人から聞いた特定分野の情報を、自分なりに分析して分かりやすく発信。面倒見がよく、後輩から頼りにされる存在です。"},
-"22112": {name: "🐇 オタ友と語り合うウサギ", description: "信頼する仲間から得た推しの情報を、さらに分析して語り合うのが大好き。寂しがり屋だけど、好きなことへの熱量は本物です。"},
-"22121": {name: "🕷️ 物静かな職人・クモ", description: "限られた情報から、静かに思考を張り巡らせ、自分だけの完璧な知識の巣を作り上げる職人肌。邪魔されるのを嫌います。"},
-"22122": {name: "🐚 秘めたるオタク・貝", description: "自分の殻の中に、好きなものに関する膨大な知識を秘めているタイプ。普段は物静かですが、一度口を開くと止まりません。"},
-"22211": {name: "🕊️ 愛を叫ぶ伝書鳩", description: "仲間から聞いた推しの尊さを、感情のままに世界へ発信する愛の伝道師。「好き」を共有できることに喜びを感じます。"},
-"22212": {name: "🦝 井戸端会議のリーダー・アライグマ", description: "仲間内で共有された情報を元に、ワイワイおしゃべりするのが大好き。コミュニティを盛り上げる中心人物です。"},
-"22221": {name: "🦦 マイペースな夢見るラッコ", description: "好きな情報だけを、好きなときに、好きなだけ楽しむ自由人。自分の心地よい世界で、幸せに暮らしています。"},
-"22222": {name: "シーラカンス", description: "ごく限られた情報源からしか情報を受け取らず、自分の世界に深く閉じこもる孤高の存在。外界の喧騒には興味がありません。"},
+  "11111": {name: "🦅 博識のジャーナリスト・ワシ", description: "空から世界を見渡すように、広く深く情報を集め、分析し、発信するリーダー。あなたの発言は多くの人に影響を与えるでしょう。"},
+  "11112": {name: "🐬 情報司令塔・イルカ", description: "広い海の情報を集め、仲間と共有するのが得意。分析力と発信力を兼ね備え、コミュニティの中心で活躍する人気者です。"},
+  "11121": {name: "🦉 知の探求者・フクロウ", description: "幅広い知識を冷静に分析し、自分の内なる知恵として蓄える賢者。物事の本質を見抜く力を持っています。"},
+  "11122": {name: "🦫 情報収集家・ビーバー", description: "コツコツと広範囲から情報を集め、自分の知識のダムを築く努力家。その知識は、いつか大きな価値を生み出します。"},
+  "11211": {name: "🦜 お祭り好きの評論家・オウム", description: "世の中の話題を広く集め、感情豊かに分析し、周りに広めるのが好き。場を盛り上げるムードメーカーです。"},
+  "11212": {name: "🦊 トレンドウォッチャー・キツネ", description: "世の中の流行に敏感で、面白そうと思った情報をキャッチしては、すぐさま周りにシェア。機転が利き、いつも話題の中心にいます。"},
+  "11221": {name: "🐈 内なる批評家・ネコ", description: "世の中の出来事を幅広く眺め、自分の中で「好きか嫌いか」を判断する自由人。気分が乗らないことには関心を示しません。"},
+  "11222": {name: "🦦 世間を眺めるカピバラ", description: "流れてくる情報をぼんやりと眺め、世の中の雰囲気を感じ取る平和主義者。のんびり情報浴を楽しんでいます。"},
+  "12111": {name: "🐝 一点突破の伝道師・ミツバチ", description: "特定分野の蜜（情報）を深く集め、分析し、仲間に正確に伝える伝達のプロ。あなたの専門知識はコミュニティの宝です。"},
+  "12112": {name: "🦦 トレンドハンター・ミーアキャット", description: "自分の好きな分野の最新情報を誰よりも早くキャッチ！分析と共有が得意な、生まれついてのトレンドセッターです。"},
+  "12121": {name: "🐙 孤高の研究者・タコ", description: "深い海の底で、興味のあることをとことん分析・探求するインテリ。その思考の深さは誰にも真似できません。"},
+  "12122": {name: "鼹 専門知識コレクター・モグラ", description: "一度気になったテーマを深く掘り下げる研究者タイプ。自分の知的好奇心に忠実で、専門家レベルの知識を蓄えます。"},
+  "12211": {name: "🐧 推し活応援団長・ペンギン", description: "自分の「好き」を深く追求し、その魅力を感情豊かに分析して世界に発信！愛と情熱で周りを巻き込むリーダーです。"},
+  "12212": {name: "🦜 ゴシップ好きのインコ", description: "特定のコミュニティの噂話や最新ニュースが大好き！見つけた情報をすぐに仲間に広めて楽しむ、おしゃべり上手な人気者。"},
+  "12221": {name: "🦙 趣味に生きるアルパカ", description: "自分の好きな世界にどっぷり浸かり、マイペースに情報を楽しむタイプ。他人の評価は気にせず、自分の「好き」を大切にします。"},
+  "12222": {name: "クラゲ", description: "自分の好きな情報だけが漂う心地よい空間（沼）で、ゆらゆらと過ごすのが至福の時。外界にはあまり興味がありません。"},
+  "21111": {name: "🐘 博愛のコメンテーター・ゾウ", description: "流れてくる幅広い情報に対し、冷静かつ愛情深い視点でコメントを発信する穏やかな巨人。あなたの言葉は多くの人を安心させます。"},
+  "21112": {name: "🐕 社交的な情報通・イヌ", description: "人から聞いた情報を元に、自分でも確かめて周りに教えるのが得意。フレンドリーで信頼されるコミュニティのハブ的存在。"},
+  "21121": {name: "🐢 物静かな博学者・リクガメ", description: "受け取った幅広い情報を、時間をかけてじっくり自分の中で分析する賢者。長年の経験に裏打ちされた深い洞察力を持っています。"},
+  "21122": {name: "🐑 知識の聞き上手・ヒツジ", description: "周りから入ってくる様々な情報を、穏やかに受け止める聞き上手。平和を愛し、知識を静かに蓄えます。"},
+  "21211": {name: "🐼 共感系インフルエンサー・パンダ", description: "世の中の話題に感情豊かに反応し、その気持ちをシェアすることで多くの共感を集める人気者。あなたの言葉は人を癒します。"},
+  "21212": {name: "🐦 うわさ話好きのスズメ", description: "あちこちから聞こえてくる情報をキャッチしては、仲間と共有するのが大好き。にぎやかな場所を好むコミュニケーターです。"},
+  "21221": {name: "🦦 人間観察好きのフェレット", description: "世の中の様々な出来事を「面白いなぁ」と眺め、自分の中で楽しむ観察者。好奇心旺盛ですが、あまり表には出しません。"},
+  "21222": {name: "🦥 のんびり屋のナマケモノ", description: "ただただ流れてくる情報を眺めているだけで満足。自分で動くのは少し面倒だけど、世の中のことはなんとなく知っています。"},
+  "22111": {name: "🦘 専門分野の解説者・カンガルー", description: "人から聞いた特定分野の情報を、自分なりに分析して分かりやすく発信。面倒見がよく、後輩から頼りにされる存在です。"},
+  "22112": {name: "🐇 オタ友と語り合うウサギ", description: "信頼する仲間から得た推しの情報を、さらに分析して語り合うのが大好き。寂しがり屋だけど、好きなことへの熱量は本物です。"},
+  "22121": {name: "🕷️ 物静かな職人・クモ", description: "限られた情報から、静かに思考を張り巡らせ、自分だけの完璧な知識の巣を作り上げる職人肌。邪魔されるのを嫌います。"},
+  "22122": {name: "🐚 秘めたるオタク・貝", description: "自分の殻の中に、好きなものに関する膨大な知識を秘めているタイプ。普段は物静かですが、一度口を開くと止まりません。"},
+  "22211": {name: "🕊️ 愛を叫ぶ伝書鳩", description: "仲間から聞いた推しの尊さを、感情のままに世界へ発信する愛の伝道師。「好き」を共有できることに喜びを感じます。"},
+  "22212": {name: "🦝 井戸端会議のリーダー・アライグマ", description: "仲間内で共有された情報を元に、ワイワイおしゃべりするのが大好き。コミュニティを盛り上げる中心人物です。"},
+  "22221": {name: "🦦 マイペースな夢見るラッコ", description: "好きな情報だけを、好きなときに、好きなだけ楽しむ自由人。自分の心地よい世界で、幸せに暮らしています。"},
+  "22222": {name: "シーラカンス", description: "ごく限られた情報源からしか情報を受け取らず、自分の世界に深く閉じこもる孤高の存在。外界の喧騒には興味がありません。"},
 };
 
-const defaultType = {name: "❓ ミステリアスな存在", description: "あなたは規格外のユニークな存在です！"};
+const defaultType = {
+  name: "❓ ミステリアスな存在",
+  description: "あなたは規格外のユニークな存在です！"
+};
 
-function createQuestionHTML(index, q) {
-const container = document.createElement('div');
-container.className = 'panel q';
-const title = document.createElement('div');
-title.className = 'title';
-title.textContent = `Question ${index + 1}: ${q.text}`;
-const opts = document.createElement('div');
-opts.className = 'answers';
-q.answers.forEach((ans, i) => {
-const label = document.createElement('label');
-label.style.display = 'block';
-const radio = document.createElement('input');
-radio.type = 'radio';
-radio.name = `q${index}`;
-radio.value = (i + 1);
-label.appendChild(radio);
-label.appendChild(document.createTextNode(` ${i + 1}. ${ans}`));
-opts.appendChild(label);
-});
-container.appendChild(title);
-container.appendChild(opts);
-return container;
-}
+let currentQuestionIndex = 0;
+let selectedAnswers = [];
 
-function renderQuiz() {
-const quizDiv = document.getElementById('quiz');
-QUESTIONS.forEach((q, idx) => {
-quizDiv.appendChild(createQuestionHTML(idx, q));
-});
+function renderCurrentQuestion() {
+  const quizDiv = document.getElementById("quiz");
+  quizDiv.innerHTML = "";
 
-const btn = document.createElement('button');
-btn.textContent = '結果を見る';
-btn.className = 'btn';
-btn.id = 'showResult';
-btn.style.marginTop = '10px';
-btn.addEventListener('click', showResult);
-quizDiv.appendChild(btn);
-}
+  if (currentQuestionIndex >= QUESTIONS.length) {
+    showResult();
+    return;
+  }
 
-function getAnswerKey() {
-// 各質問の選択肢を数字で取得
-let key = '';
-for (let i = 0; i < QUESTIONS.length; i++) {
-const radios = document.getElementsByName(`q${i}`);
-let chosen = null;
-for (const r of radios) {
-if (r.checked) {
-chosen = r.value;
-break;
-}
-}
-if (!chosen) {
-// 未回答がある場合は未完了
-return null;
-}
-key += chosen;
-}
-return key;
+  const q = QUESTIONS[currentQuestionIndex];
+
+  const panel = document.createElement("div");
+  panel.className = "panel q";
+
+  const progress = document.createElement("div");
+  progress.className = "progress";
+  progress.textContent = `${currentQuestionIndex + 1} / ${QUESTIONS.length}`;
+
+  const title = document.createElement("div");
+  title.className = "title";
+  title.textContent = q.text;
+
+  const answers = document.createElement("div");
+  answers.className = "answers";
+
+  q.answers.forEach((ans, i) => {
+    const btn = document.createElement("button");
+    btn.className = "answer-btn";
+    btn.textContent = `${i + 1}. ${ans}`;
+    btn.addEventListener("click", () => {
+      selectedAnswers.push(String(i + 1));
+      currentQuestionIndex++;
+      renderCurrentQuestion();
+    });
+    answers.appendChild(btn);
+  });
+
+  panel.appendChild(progress);
+  panel.appendChild(title);
+  panel.appendChild(answers);
+  quizDiv.appendChild(panel);
 }
 
 function showResult() {
-const key = getAnswerKey();
-if (!key) {
-alert('すべての質問に回答してください。');
-return;
-}
-const finalType = ANIMAL_TYPES[key] || defaultType;
-const resDiv = document.getElementById('resultCard');
-resDiv.innerHTML = `<div class="name">${finalType.name}</div><div class="desc">${finalType.description}</div>`;
-document.getElementById('resultArea').style.display = 'block';
-// スクロールして結果を表示
-document.getElementById('resultArea').scrollIntoView({ behavior: 'smooth' });
+  const key = selectedAnswers.join("");
+  const finalType = ANIMAL_TYPES[key] || defaultType;
+
+  document.getElementById("quiz").innerHTML = "";
+  const resDiv = document.getElementById("resultCard");
+  resDiv.innerHTML = `
+    <div class="name">${finalType.name}</div>
+    <div class="desc">${finalType.description}</div>
+  `;
+
+  document.getElementById("resultArea").style.display = "block";
+  document.getElementById("resultArea").scrollIntoView({ behavior: "smooth" });
 }
 
-// 初期ロード
-renderQuiz();
+renderCurrentQuestion();
 </script>
 </body>
 </html>
