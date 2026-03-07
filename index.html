@@ -5,120 +5,452 @@
 <title>ニュース接触タイプ診断</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <style>
+:root {
+  --bg: #f3f6fb;
+  --panel: #ffffff;
+  --text: #1f2937;
+  --sub: #6b7280;
+  --line: #dbe3ee;
+  --accent: #2563eb;
+  --accent-soft: #e8f0ff;
+  --card-bg: linear-gradient(135deg, #fffaf0 0%, #fff2c7 100%);
+  --card-line: #f0c419;
+  --shadow: 0 10px 30px rgba(0,0,0,.08);
+  --radius: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background: #f5f7fb;
-  color: #222;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans",
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP", Meiryo, sans-serif;
+  background:
+    radial-gradient(circle at top right, #eef4ff 0%, transparent 30%),
+    linear-gradient(180deg, #f7f9fd 0%, #eef3f9 100%);
+  color: var(--text);
+  padding: 18px;
+  line-height: 1.7;
 }
+
+.container {
+  max-width: 760px;
+  margin: 0 auto;
+}
+
 .panel {
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.05);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
 }
+
 .title {
-  font-weight: bold;
-  font-size: 20px;
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1.4;
   margin-bottom: 8px;
+  letter-spacing: .01em;
 }
-.q {
-  margin: 12px 0;
+
+.subtitle {
+  color: var(--sub);
+  font-size: 15px;
 }
+
+.progress-wrap {
+  margin-bottom: 14px;
+}
+
+.progress-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: var(--sub);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background: #e7edf6;
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.06);
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #60a5fa 0%, #2563eb 100%);
+  transition: width .25s ease;
+}
+
+.q-title {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
 .answers {
   margin-top: 16px;
 }
+
 .answer-btn,
-.retry-btn {
+.nav-btn,
+.share-btn,
+.retry-btn,
+.article-link {
+  border-radius: 14px;
+  transition: .2s ease;
+}
+
+.answer-btn {
   display: block;
   width: 100%;
   text-align: left;
-  margin-bottom: 10px;
-  padding: 12px 14px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
+  margin-bottom: 12px;
+  padding: 16px 16px;
+  border: 1px solid #d5dfec;
   background: #fff;
   cursor: pointer;
-  transition: 0.2s;
-  font-size: 15px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,.03);
 }
-.answer-btn:hover,
-.retry-btn:hover {
-  background: #eef5ff;
-  border-color: #4a90e2;
+
+.answer-btn:hover {
+  background: #f8fbff;
+  border-color: #8ab4ff;
+  transform: translateY(-1px);
 }
-.card {
-  border: 1px solid #f0c419;
-  background: #fff9dc;
-  padding: 16px;
-  border-radius: 8px;
+
+.answer-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 10px;
+  vertical-align: top;
 }
-.name {
-  font-size: 18px;
-  font-weight: bold;
-  color: #b58900;
-}
-.desc {
-  margin-top: 6px;
-  line-height: 1.7;
-}
-.progress {
-  margin-bottom: 10px;
-  font-size: 14px;
-  color: #666;
-}
-.retry-btn {
-  text-align: center;
+
+.nav-row {
+  display: flex;
+  gap: 10px;
   margin-top: 16px;
+}
+
+.nav-btn,
+.share-btn,
+.retry-btn {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 13px 16px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.nav-btn.secondary,
+.retry-btn.secondary {
+  background: #eef2f7;
+  color: #334155;
+}
+
+.nav-btn.primary,
+.retry-btn.primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.nav-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.result-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--card-line);
+  background: var(--card-bg);
+  border-radius: 22px;
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.result-card::before {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.35);
+}
+
+.result-card::after {
+  content: "";
+  position: absolute;
+  bottom: -50px;
+  left: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.18);
+}
+
+.result-badge {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  background: rgba(255,255,255,.8);
+  color: #7c5a00;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  border: 1px solid rgba(181, 137, 0, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+.result-name {
+  position: relative;
+  z-index: 1;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.35;
+  color: #7a5800;
+  margin-bottom: 10px;
+}
+
+.result-desc {
+  position: relative;
+  z-index: 1;
+  font-size: 16px;
+  color: #4b5563;
+}
+
+.result-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.info-card {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(0,0,0,.03);
+}
+
+.info-title {
+  font-weight: 800;
+  font-size: 17px;
+  margin-bottom: 8px;
+}
+
+.advice-list {
+  margin: 0;
+  padding-left: 1.2em;
+  color: #374151;
+}
+
+.advice-list li + li {
+  margin-top: 8px;
+}
+
+.article-link {
+  display: block;
+  text-decoration: none;
+  background: #f8fbff;
+  border: 1px solid #d8e7ff;
+  color: #1d4ed8;
+  padding: 14px 15px;
+  font-weight: 700;
+}
+
+.article-link:hover {
+  background: #eef5ff;
+  transform: translateY(-1px);
+}
+
+.article-note {
+  color: var(--sub);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.share-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.share-btn {
+  background: #111827;
+  color: #fff;
+}
+
+.share-btn:hover {
+  transform: translateY(-1px);
+}
+
+.share-btn.secondary {
+  background: #eef2f7;
+  color: #334155;
+}
+
+.small-note {
+  margin-top: 10px;
+  color: var(--sub);
+  font-size: 13px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  body {
+    padding: 12px;
+  }
+
+  .panel {
+    padding: 15px;
+    border-radius: 14px;
+  }
+
+  .title {
+    font-size: 21px;
+  }
+
+  .q-title {
+    font-size: 19px;
+  }
+
+  .answer-btn {
+    font-size: 15px;
+    padding: 14px 14px;
+  }
+
+  .nav-row {
+    flex-direction: column;
+  }
+
+  .nav-btn,
+  .retry-btn,
+  .share-btn {
+    width: 100%;
+  }
+
+  .result-name {
+    font-size: 24px;
+  }
+
+  .result-desc {
+    font-size: 15px;
+  }
 }
 </style>
 </head>
 <body>
+<div class="container">
 
-<div class="panel" id="intro">
-  <div class="title">5つの質問に答えて、あなたのニュースとの付き合い方をチェックしよう！</div>
-  <div>ニュースの取り方のタイプを、あなたの回答パターンから動物キャラクターで診断します。</div>
-</div>
+  <div class="panel" id="intro">
+    <div class="title">5つの質問に答えて、あなたのニュースとの付き合い方をチェックしよう！</div>
+    <div class="subtitle">ニュースの取り方のタイプを、あなたの回答パターンから動物キャラクターで診断します。</div>
+  </div>
 
-<div id="quiz"></div>
+  <div id="quiz"></div>
 
-<div class="panel" id="resultArea" style="display:none;">
-  <div class="title">診断結果</div>
-  <div id="resultCard" class="card"></div>
-  <div id="article" style="margin-top:12px;">
-    <strong>おすすめ記事</strong>
-    <div style="margin-top:6px;">
-      👉 朝日新聞の若手記者が聞いた！新しいマスメディアの形は？RehacQ高橋氏の答えは
+  <div class="panel hidden" id="resultArea">
+    <div class="title">診断結果</div>
+
+    <div id="resultCard" class="result-card"></div>
+
+    <div class="result-grid">
+      <div class="info-card">
+        <div class="info-title">あなたへのアドバイス</div>
+        <ul id="adviceList" class="advice-list"></ul>
+      </div>
+
+      <div class="info-card">
+        <div class="info-title">おすすめ記事</div>
+        <a id="articleLink" class="article-link" href="#" target="_blank" rel="noopener noreferrer"></a>
+        <div id="articleNote" class="article-note"></div>
+      </div>
+    </div>
+
+    <div class="share-row">
+      <button class="share-btn" id="shareXBtn" type="button">Xでシェアする</button>
+      <button class="share-btn secondary" id="copyResultBtn" type="button">結果文をコピー</button>
+    </div>
+
+    <div class="small-note">※ シェア文には診断結果と診断ページURLが入ります。</div>
+
+    <div class="nav-row">
+      <button class="retry-btn secondary" id="restartBtn" type="button">もう一度診断する</button>
     </div>
   </div>
-  <button class="retry-btn" id="retryBtn" type="button">もう一度診断する</button>
 </div>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const QUESTIONS = [
-    { text: "Q1. 新しいニュースを知るとき、あなたのスタイルに近いのは？", answers: [
-      "自分でキーワード検索したり、ニュースアプリを巡回する",
-      "SNSのタイムラインや、友達からのシェアで自然と知る"
-    ] },
-    { text: "Q2. あなたがよく見るニュースのジャンルは？", answers: [
-      "政治経済からエンタメ、スポーツまで幅広くチェックする",
-      "好きなアイドルや趣味、特定の社会問題など、関心事が中心"
-    ] },
-    { text: "Q3. 衝撃的なニュースを見たとき、あなたの最後の反応は？", answers: [
-      "「これは本当？」「他のメディアではどう報じている？」と事実関係が気になる",
-      "「すごい！」「ありえない！」と、まず感情的に反応する"
-    ] },
-    { text: "Q4. 面白い記事や動画を見つけたら、どうすることが多い？", answers: [
-      "SNSでシェアしたり、友達に「これ見て！」とすぐ教える",
-      "自分の中で楽しんで、特に誰かに言うことは少ない"
-    ] },
-    { text: "Q5. 情報源について、あなたの考えに近いのは？", answers: [
-      "複数のメディアや専門家の意見を比較して、多角的に判断したい",
-      "信頼している特定のメディアやインフルエンサーがいれば十分"
-    ] }
+    {
+      text: "Q1. 新しいニュースを知るとき、あなたのスタイルに近いのは？",
+      answers: [
+        "自分でキーワード検索したり、ニュースアプリを巡回する",
+        "SNSのタイムラインや、友達からのシェアで自然と知る"
+      ]
+    },
+    {
+      text: "Q2. あなたがよく見るニュースのジャンルは？",
+      answers: [
+        "政治経済からエンタメ、スポーツまで幅広くチェックする",
+        "好きなアイドルや趣味、特定の社会問題など、関心事が中心"
+      ]
+    },
+    {
+      text: "Q3. 衝撃的なニュースを見たとき、あなたの最後の反応は？",
+      answers: [
+        "「これは本当？」「他のメディアではどう報じている？」と事実関係が気になる",
+        "「すごい！」「ありえない！」と、まず感情的に反応する"
+      ]
+    },
+    {
+      text: "Q4. 面白い記事や動画を見つけたら、どうすることが多い？",
+      answers: [
+        "SNSでシェアしたり、友達に「これ見て！」とすぐ教える",
+        "自分の中で楽しんで、特に誰かに言うことは少ない"
+      ]
+    },
+    {
+      text: "Q5. 情報源について、あなたの考えに近いのは？",
+      answers: [
+        "複数のメディアや専門家の意見を比較して、多角的に判断したい",
+        "信頼している特定のメディアやインフルエンサーがいれば十分"
+      ]
+    }
   ];
 
   const ANIMAL_TYPES = {
@@ -161,15 +493,108 @@ document.addEventListener("DOMContentLoaded", () => {
     description: "あなたは規格外のユニークな存在です！"
   };
 
+  const ARTICLE_BY_CATEGORY = {
+    balanced: {
+      title: "複数の情報源を見比べるときに意識したい、ニュースの読み方入門",
+      url: "https://www.asahi.com/",
+      note: "幅広く情報を見たい人向け。読み比べのコツを意識すると、判断の質が上がりやすくなります。"
+    },
+    social: {
+      title: "SNS時代に流れてくる情報と上手につきあうためのヒント",
+      url: "https://www.asahi.com/",
+      note: "流れてくる情報を拾うのが得意な人向け。早さだけでなく、確からしさも押さえるのがコツです。"
+    },
+    focused: {
+      title: "好きなテーマを深掘りするときの、偏りを減らす情報収集術",
+      url: "https://www.asahi.com/",
+      note: "関心分野を深く追う人向け。専門性を保ちつつ、視野を広げる工夫が役立ちます。"
+    },
+    emotional: {
+      title: "強い感情を動かされたニュースに出会ったときの立ち止まり方",
+      url: "https://www.asahi.com/",
+      note: "共感力や反応の速さが強みの人向け。一呼吸おいて確認する習慣が効きます。"
+    }
+  };
+
   let currentQuestionIndex = 0;
   let selectedAnswers = [];
 
   const quizDiv = document.getElementById("quiz");
   const resultArea = document.getElementById("resultArea");
   const resultCard = document.getElementById("resultCard");
-  const retryBtn = document.getElementById("retryBtn");
+  const adviceList = document.getElementById("adviceList");
+  const articleLink = document.getElementById("articleLink");
+  const articleNote = document.getElementById("articleNote");
+  const shareXBtn = document.getElementById("shareXBtn");
+  const copyResultBtn = document.getElementById("copyResultBtn");
+  const restartBtn = document.getElementById("restartBtn");
+
+  function getAnswerValue(index) {
+    return selectedAnswers[index] || null;
+  }
+
+  function buildAdvice() {
+    const q1 = getAnswerValue(0);
+    const q2 = getAnswerValue(1);
+    const q3 = getAnswerValue(2);
+    const q4 = getAnswerValue(3);
+    const q5 = getAnswerValue(4);
+
+    const tips = [];
+
+    if (q1 === "2") {
+      tips.push("SNSやシェア経由で情報に出会いやすいタイプです。気になった話題ほど、元の発信源や一次情報を1回だけでも確認する習慣をつけると、精度がぐっと上がります。");
+    } else {
+      tips.push("自分で情報を取りに行けるのが強みです。検索や巡回先が固定化しやすいので、たまに違う立場や異なる媒体ものぞくと視野がさらに広がります。");
+    }
+
+    if (q2 === "2") {
+      tips.push("関心分野への集中力が高いタイプです。好きなテーマの周辺分野も少しだけ触れると、推しや趣味のニュースの見え方がいっそう立体的になります。");
+    } else {
+      tips.push("幅広く情報を追えるタイプです。量が多くなりやすいので、『毎日ここだけは見る』という軸媒体を決めると疲れにくくなります。");
+    }
+
+    if (q3 === "2") {
+      tips.push("感情が先に動くのは自然なことです。驚いた話題ほど、シェアや判断の前に『日付』『出典』『他媒体の扱い』の3点だけ確認すると安心です。");
+    } else {
+      tips.push("事実確認をしようとする姿勢が大きな強みです。確認に時間をかけすぎて疲れたら、『この件は今は保留』と決めるのも大事です。");
+    }
+
+    if (q4 === "1") {
+      tips.push("情報を人に届ける力があります。シェア前に短く一言『出典はここ』『まだ速報段階』のような注釈を添えると、さらに信頼されやすくなります。");
+    } else {
+      tips.push("自分の中で消化できる落ち着きがあります。たまに『これは誰かに共有する価値があるか』と考えると、良い情報の循環が生まれます。");
+    }
+
+    if (q5 === "2") {
+      tips.push("信頼できる情報源を持つのは強みです。ただし、重要なテーマほど1つだけに頼らず、違う角度の説明を1本だけ足すと判断の偏りを減らせます。");
+    } else {
+      tips.push("比較しながら考える姿勢がとても健全です。毎回すべてを見比べるのは大変なので、『重い話題だけ複数確認』など自分ルールを作ると続けやすいです。");
+    }
+
+    return tips;
+  }
+
+  function getArticleData() {
+    const q1 = getAnswerValue(0);
+    const q2 = getAnswerValue(1);
+    const q3 = getAnswerValue(2);
+    const q5 = getAnswerValue(4);
+
+    if (q3 === "2") return ARTICLE_BY_CATEGORY.emotional;
+    if (q2 === "2") return ARTICLE_BY_CATEGORY.focused;
+    if (q1 === "2") return ARTICLE_BY_CATEGORY.social;
+    if (q5 === "1") return ARTICLE_BY_CATEGORY.balanced;
+
+    return ARTICLE_BY_CATEGORY.balanced;
+  }
+
+  function getShareText(result) {
+    return `ニュース接触タイプ診断の結果は「${result.name}」でした！\n${result.description}\n#ニュース接触タイプ診断`;
+  }
 
   function renderCurrentQuestion() {
+    resultArea.classList.add("hidden");
     quizDiv.innerHTML = "";
 
     if (currentQuestionIndex >= QUESTIONS.length) {
@@ -178,16 +603,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const q = QUESTIONS[currentQuestionIndex];
+    const answeredCount = currentQuestionIndex;
+    const progressPercent = (answeredCount / QUESTIONS.length) * 100;
 
     const panel = document.createElement("div");
-    panel.className = "panel q";
+    panel.className = "panel";
 
-    const progress = document.createElement("div");
-    progress.className = "progress";
-    progress.textContent = `${currentQuestionIndex + 1} / ${QUESTIONS.length}`;
+    const progressWrap = document.createElement("div");
+    progressWrap.className = "progress-wrap";
+    progressWrap.innerHTML = `
+      <div class="progress-top">
+        <span>進捗</span>
+        <span>${currentQuestionIndex + 1} / ${QUESTIONS.length}</span>
+      </div>
+      <div class="progress-bar" aria-hidden="true">
+        <div class="progress-fill" style="width: ${progressPercent}%;"></div>
+      </div>
+    `;
 
     const title = document.createElement("div");
-    title.className = "title";
+    title.className = "q-title";
     title.textContent = q.text;
 
     const answers = document.createElement("div");
@@ -197,39 +632,92 @@ document.addEventListener("DOMContentLoaded", () => {
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "answer-btn";
-      btn.textContent = `${i + 1}. ${ans}`;
+      btn.innerHTML = `<span class="answer-num">${i + 1}</span>${ans}`;
       btn.addEventListener("click", () => {
-        selectedAnswers.push(String(i + 1));
+        selectedAnswers[currentQuestionIndex] = String(i + 1);
         currentQuestionIndex++;
         renderCurrentQuestion();
       });
       answers.appendChild(btn);
     });
 
-    panel.appendChild(progress);
+    const navRow = document.createElement("div");
+    navRow.className = "nav-row";
+
+    const backBtn = document.createElement("button");
+    backBtn.type = "button";
+    backBtn.className = "nav-btn secondary";
+    backBtn.textContent = "戻る";
+    backBtn.disabled = currentQuestionIndex === 0;
+    backBtn.addEventListener("click", () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        renderCurrentQuestion();
+      }
+    });
+
+    navRow.appendChild(backBtn);
+
+    panel.appendChild(progressWrap);
     panel.appendChild(title);
     panel.appendChild(answers);
+    panel.appendChild(navRow);
     quizDiv.appendChild(panel);
   }
 
   function showResult() {
     const key = selectedAnswers.join("");
     const finalType = ANIMAL_TYPES[key] || defaultType;
+    const adviceItems = buildAdvice();
+    const article = getArticleData();
 
     quizDiv.innerHTML = "";
+
     resultCard.innerHTML = `
-      <div class="name">${finalType.name}</div>
-      <div class="desc">${finalType.description}</div>
+      <div class="result-badge">診断完了</div>
+      <div class="result-name">${finalType.name}</div>
+      <div class="result-desc">${finalType.description}</div>
     `;
 
-    resultArea.style.display = "block";
-    resultArea.scrollIntoView({ behavior: "smooth" });
+    adviceList.innerHTML = "";
+    adviceItems.forEach((tip) => {
+      const li = document.createElement("li");
+      li.textContent = tip;
+      adviceList.appendChild(li);
+    });
+
+    articleLink.textContent = `👉 ${article.title}`;
+    articleLink.href = article.url;
+    articleNote.textContent = article.note;
+
+    shareXBtn.onclick = () => {
+      const shareText = getShareText(finalType);
+      const shareUrl = window.location.href;
+      const xUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(xUrl, "_blank", "noopener,noreferrer");
+    };
+
+    copyResultBtn.onclick = async () => {
+      const text = `${getShareText(finalType)}\n${window.location.href}`;
+      try {
+        await navigator.clipboard.writeText(text);
+        copyResultBtn.textContent = "コピーしました";
+        setTimeout(() => {
+          copyResultBtn.textContent = "結果文をコピー";
+        }, 1600);
+      } catch (e) {
+        alert("コピーに失敗しました。");
+      }
+    };
+
+    resultArea.classList.remove("hidden");
+    resultArea.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  retryBtn.addEventListener("click", () => {
+  restartBtn.addEventListener("click", () => {
     currentQuestionIndex = 0;
     selectedAnswers = [];
-    resultArea.style.display = "none";
+    resultArea.classList.add("hidden");
     renderCurrentQuestion();
   });
 
